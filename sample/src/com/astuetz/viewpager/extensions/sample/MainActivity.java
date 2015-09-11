@@ -33,14 +33,13 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.astuetz.PagerSlidingTabStrip;
+import com.astuetz.PagerSlidingTabStripWithStyle;
 
 public class MainActivity extends FragmentActivity {
 
 	private final Handler handler = new Handler();
 
-	private PagerSlidingTabStrip tabs;
+	private PagerSlidingTabStripWithStyle tabs;
 	private ViewPager pager;
 	private MyPagerAdapter adapter;
 
@@ -52,7 +51,8 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+		tabs = (PagerSlidingTabStripWithStyle) findViewById(R.id.tabs);
+		tabs.setTabTextColorStateList(getResources().getColorStateList(R.color.bottom_text_selector));
 		pager = (ViewPager) findViewById(R.id.pager);
 		adapter = new MyPagerAdapter(getSupportFragmentManager());
 

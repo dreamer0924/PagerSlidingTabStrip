@@ -1,7 +1,9 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
 
 dependencies {
-    compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.android.support:support-v4:22.2.1'
 }
 
 android {
@@ -22,4 +24,22 @@ android {
     }
 }
 
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+uploadArchives {
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            name = 'mavenCentralReleaseDeployer'
+            repository(url: "http://192.168.8.220:8081/nexus/content/repositories/scirespo/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+
+            pom.version = "1.1.0"
+            pom.artifactId = "pagerslidingtabstrip"
+            pom.groupId = "com.astuetz"
+            pom.name = "PagerSlidingTabStripLibrary"
+            pom.packaging = 'aar'
+        }
+    }
+}
+
+//apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

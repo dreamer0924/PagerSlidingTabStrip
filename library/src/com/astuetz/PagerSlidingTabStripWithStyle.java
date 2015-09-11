@@ -35,15 +35,12 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import com.astuetz.pagerslidingtabstrip.R;
 
 import java.util.Locale;
 
-public class PagerSlidingTabStrip extends HorizontalScrollView {
+public class PagerSlidingTabStripWithStyle extends HorizontalScrollView {
 
 	public interface IconTabProvider {
 		public int getPageIconResId(int position);
@@ -62,7 +59,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private final PageListener pageListener = new PageListener();
 	public OnPageChangeListener delegatePageListener;
 
-	private LinearLayout tabsContainer;
+	private RadioGroup tabsContainer;
 	private ViewPager pager;
 
 	private int tabCount;
@@ -93,7 +90,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private ColorStateList tabTextColorStateList;
 
 	private Typeface tabTypeface = null;
-	private int tabTypefaceStyle = Typeface.BOLD;
+	private int tabTypefaceStyle = Typeface.NORMAL;
 
 	private int lastScrollX = 0;
 
@@ -101,21 +98,21 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	private Locale locale;
 
-	public PagerSlidingTabStrip(Context context) {
+	public PagerSlidingTabStripWithStyle(Context context) {
 		this(context, null);
 	}
 
-	public PagerSlidingTabStrip(Context context, AttributeSet attrs) {
+	public PagerSlidingTabStripWithStyle(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public PagerSlidingTabStrip(Context context, AttributeSet attrs, int defStyle) {
+	public PagerSlidingTabStripWithStyle(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 
 		setFillViewport(true);
 		setWillNotDraw(false);
 
-		tabsContainer = new LinearLayout(context);
+		tabsContainer = new RadioGroup(context);
 		tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
 		tabsContainer.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		addView(tabsContainer);
@@ -204,7 +201,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			}
 
 		}
-
+		tabsContainer.check(tabsContainer.getChildAt(0).getId());
 		updateTabStyles();
 
 		getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -228,12 +225,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	}
 
 	private void addTextTab(final int position, String title) {
-
-		TextView tab = new TextView(getContext());
+		RadioButton tab = new RadioButton(getContext());
+		tab.setButtonDrawable(android.R.color.transparent);
+		tab.setBackgroundDrawable(null);
 		tab.setText(title);
 		tab.setGravity(Gravity.CENTER);
 		tab.setSingleLine();
-
 		addTab(position, tab);
 	}
 
@@ -267,9 +264,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 			v.setBackgroundResource(tabBackgroundResId);
 
-			if (v instanceof TextView) {
+			if (v instanceof RadioButton) {
 
-				TextView tab = (TextView) v;
+				RadioButton tab = (RadioButton) v;
 				tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
 				tab.setTypeface(tabTypeface, tabTypefaceStyle);
 
@@ -391,6 +388,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		public void onPageSelected(int position) {
 			if (delegatePageListener != null) {
 				delegatePageListener.onPageSelected(position);
+			}
+			View v = tabsContainer.getChildAt(position);
+			if(v instanceof RadioButton) {
+				((RadioButton)v).setChecked(true);
 			}
 		}
 
@@ -576,7 +577,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			dest.writeInt(currentPosition);
 		}
 
-		public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+		public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
 			@Override
 			public SavedState createFromParcel(Parcel in) {
 				return new SavedState(in);
